@@ -1,9 +1,3 @@
-# 🏴‍☠️ pirates-asd-ber-26
-This is the cohort repository for the advanced software development course. In this repository you will find:
-
-- [./sessions](./sessions): the session handouts and demo projects.
-- [./side-projects](./side-projects): A collection of side projects that can be used to practice your skills.
-
 ## Schedule
 
 The following session schedule is subject to change. It is a general plan that can be adapted depending on the needs of the cohort.
