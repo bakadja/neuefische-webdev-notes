@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Hub | Neue Fische Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+    <!-- Header -->
+    <header class="relative pt-20 pb-16 px-6 overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20 pointer-events-none">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] rounded-full bg-blue-600 blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] rounded-full bg-purple-600 blur-[120px]"></div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                Course <span class="gradient-text">Notes</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-400 max-w-2xl mx-auto font-light">
+                Interactive notebooks and technical resources from the Neue Fische Advanced Web Development bootcamp.
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- TypeScript Section -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">
+                <div class="section-icon bg-blue-500/20 text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25"/><line x1="8" y1="16" x2="8.01" y2="16"/><line x2="12.01" y1="16" x2="12"/><line x1="16" y1="16" x2="16.01" y2="16"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400">TypeScript</h2>
+                <ul class="space-y-3">
+                    <li><a href="typescript/01-typescript-basics/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Basics</a></li>
+                    <li><a href="typescript/02-typescript-client-side/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Client Side Dashboard</a></li>
+                    <li><a href="typescript/03-typescript-advanced/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Advanced Concepts</a></li>
+                </ul>
+            </section>
+
+            <!-- Express Section -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">
+                <div class="section-icon bg-emerald-500/20 text-emerald-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-emerald-400">Backend Express</h2>
+                <ul class="space-y-3">
+                    <li><a href="express/01-express-basics/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Fundamentals</a></li>
+                    <li><a href="express/02-template-engines/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Template Engines</a></li>
+                    <li><a href="express/03-express-filesystem/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Filesystem Integration</a></li>
+                    <li><a href="express/04-express-mvc/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> MVC Architecture</a></li>
+                    <li><a href="express/05-express-sql/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Express & SQL</a></li>
+                </ul>
+            </section>
+
+            <!-- Database & OOP -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">
+                <div class="section-icon bg-amber-500/20 text-amber-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-amber-400">Data & Architecture</h2>
+                <ul class="space-y-3">
+                    <li><a href="sql/01-sql-basics/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> SQL Basics</a></li>
+                    <li><a href="oop/01-oop-javascript/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> OOP JavaScript</a></li>
+                    <li><a href="oop/02-oop-typescript/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> OOP TypeScript</a></li>
+                    <li><a href="oop/03-principles-design-patterns/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Design Patterns</a></li>
+                </ul>
+            </section>
+
+            <!-- NestJS Section -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">
+                <div class="section-icon bg-rose-500/20 text-rose-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-rose-400">NestJS</h2>
+                <ul class="space-y-3">
+                    <li><a href="nestjs/01-nestjs-basics/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Nest Basics</a></li>
+                    <li><a href="nestjs/02-nestjs-databases/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> persistence & DB</a></li>
+                    <li><a href="nestjs/03-nestjs-restful/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> REST APIs</a></li>
+                    <li><a href="nestjs/04-nestjs-authentication/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Auth (JWT)</a></li>
+                    <li><a href="nestjs/05-swagger-openapi/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Swagger Docs</a></li>
+                    <li><a href="nestjs/06-nestjs-testing/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Nest Testing</a></li>
+                </ul>
+            </section>
+
+            <!-- DevOps & CI -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">
+                <div class="section-icon bg-slate-500/20 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-slate-400">DevOps</h2>
+                <ul class="space-y-3">
+                    <li><a href="devops/01-ci/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Continuous Integration</a></li>
+                    <li><a href="devops/02-docker/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Docker Basics</a></li>
+                    <li><a href="devops/03-deployment/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Cloud Deployment</a></li>
+                    <li><a href="devops/04-docker-advanced/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> Advanced Docker</a></li>
+                </ul>
+            </section>
+
+            <!-- NextJS & Realtime -->
+            <section class="glass p-8 rounded-3xl card-hover transition-all duration-300">Section
+                <div class="section-icon bg-cyan-500/20 text-cyan-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </div>
+                <h2 class="text-2xl font-bold mb-4 text-cyan-400">NextJS & More</h2>
+                <ul class="space-y-3">
+                    <li><a href="nextjs/01-nextjs-pages-router/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Pages Router</a></li>
+                    <li><a href="nextjs/02-nextjs-app-router/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> App Router</a></li>
+                    <li><a href="nextjs/03-global-state/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Global State</a></li>
+                    <li><a href="nextjs/04-nextjs-testing/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Frontend Testing</a></li>
+                    <li><a href="realtime/01-websockets/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> WebSockets</a></li>
+                    <li><a href="ai/01-openai-api/notes.html" class="text-slate-300 hover:text-white transition-colors flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> AI Integration</a></li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 py-10 border-t border-white/5 text-center text-slate-500 text-sm">
+        <p>&copy; 2026 Bootcamp Notes &bull; Built for Neue Fische Students</p>
+    </footer>
+</body>
+</html>
