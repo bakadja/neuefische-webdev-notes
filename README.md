@@ -69,4 +69,18 @@ This repository is organized by course modules. Each folder contains high-fideli
 
 ---
 
+## 🚀 Deployment
+
+This site is optimized for **GitHub Pages**. To deploy:
+
+1. Push this repository to GitHub.
+2. Go to **Settings** > **Pages**.
+3. Under **Build and deployment**, set the source to **Deploy from a branch**.
+4. Select the `main` branch and the `/ (root)` folder.
+5. Click **Save**.
+
+The dashboard will be available at `https://<your-username>.github.io/<repo-name>/`.
+
+---
+
 *Last Updated: April 20, 2026*
