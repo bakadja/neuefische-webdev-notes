@@ -3,496 +3,601 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setup Avancé TypeScript - Guide Interactif</title>
+    <title>TypeScript Avancé Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chosen Palette: Warm neutrals (slate-50 to slate-900) with teal (teal-600) and indigo (indigo-500) accents for a calm, professional developer environment. -->
-    <!-- Application Structure Plan: A dashboard layout with a persistent sidebar navigation and a dynamic main content area. This structure allows users to jump between the chronological learning modules without losing context. Interactive tabs and visual data representations (charts, toggles) replace static text to enhance engagement. -->
-    <!-- Visualization & Content Choices: 1. Intro: Visual flow using CSS grids to show TS -> JS transformation. 2. TSConfig: Interactive rule toggler (Goal: Organize/Inform -> Interactive List -> JS update -> Vanilla JS). 3. Traditional: Code block with explanation. 4. Modern: Chart.js Bar Chart comparing performance/processes (Goal: Compare -> Bar Chart -> Hover -> Chart.js). 5. Duo & Challenge: Interactive accordions. NO SVG or Mermaid used. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
-        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 40vh; max-height: 400px; }
-        .nav-active { background-color: #334155; color: #38bdf8; border-left: 4px solid #38bdf8; }
-        .nav-item { transition: all 0.2s ease-in-out; border-left: 4px solid transparent; }
-        .nav-item:hover:not(.nav-active) { background-color: #1e293b; border-left: 4px solid #94a3b8; }
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .code-block { font-family: monospace; background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.875rem; }
-        .toggle-btn.active { background-color: #0ea5e9; color: white; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+
+        .font-mono {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        .code-block {
+            background-color: #1E293B;
+            color: #E2E8F0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .nav-item.active {
+            background-color: #EFF6FF;
+            color: #2563EB;
+            border-left: 4px solid #2563EB;
+            font-weight: 600;
+        }
+
+        .tab-btn.active {
+            background-color: #2563EB;
+            color: white;
+        }
+
+        .util-btn.active {
+            border-color: #2563EB;
+            background-color: #EFF6FF;
+            color: #1D4ED8;
+        }
     </style>
 </head>
-<body class="flex flex-col md:flex-row min-h-screen overflow-x-hidden">
+<body class="min-h-screen flex flex-col">
 
-    <nav class="w-full md:w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col shadow-xl z-10 sticky top-0 md:h-screen">
-        <div class="p-6 bg-slate-950 text-white border-b border-slate-800">
-            <h1 class="text-xl font-bold tracking-tight">TypeScript Setup</h1>
-            <p class="text-xs text-slate-400 mt-1">Guide Interactif Avancé</p>
-        </div>
-        <div class="overflow-y-auto flex-1 py-4" id="nav-container">
-        </div>
-        <div class="p-4 bg-slate-950 border-t border-slate-800">
-            <div class="text-xs text-slate-500">Progression</div>
-            <div class="w-full bg-slate-800 rounded-full h-2 mt-2">
-                <div class="bg-sky-500 h-2 rounded-full transition-all duration-500" id="progress-bar" style="width: 0%"></div>
+    <!-- Chosen Palette: Slate (neutrals) #F8FAFC, #1E293B, #0F172A with Royal Blue #2563EB (TS brand) and Emerald #10B981 for success/boss sections. -->
+    
+    <!-- Application Structure Plan: A dashboard-style layout with a persistent sidebar navigation and a main content area. This structure allows the user to explore concepts non-linearly while maintaining context. The content is broken down into modular thematic sections (Intro, Outils, Utilitaires, Pratique, Boss Final) matching the learning progression. Interactive tabs and toggles within sections prevent cognitive overload by showing code snippets conditionally. -->
+    
+    <!-- Visualization & Content Choices: 
+         1. Intro: Uses Chart.js (Bar) to compare TS features by "Complexity vs. Utility" to provide immediate visual context.
+         2. Outils (Tuples, etc.): Uses interactive tabs to switch between related basic concepts.
+         3. Utilitaires: Uses clickable pill buttons to dynamically update a code block, showing how Partial/Omit transform a base type.
+         4. Challenge/Pratique: Step-by-step accordion/tab approach to walk through the BookShelf API.
+         NO SVG/Mermaid used. -->
+         
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">📘</span>
+                <h1 class="text-xl font-bold text-slate-800">TypeScript Avancé <span class="text-blue-600">Explorer</span></h1>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm text-slate-500">
+                <span>Progression :</span>
+                <div class="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-blue-600 transition-all duration-500" style="width: 20%"></div>
+                </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <main class="flex-1 p-6 md:p-12 overflow-y-auto relative w-full">
-        <div class="max-w-5xl mx-auto" id="main-content">
+    <div class="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row">
+        
+        <aside class="w-full md:w-64 bg-white md:min-h-[calc(100vh-4rem)] border-r border-slate-200 md:block hidden" id="sidebar">
+            <nav class="flex flex-col gap-1 p-4 mt-4">
+                <button onclick="nav('intro')" id="nav-intro" class="nav-item active text-left px-4 py-3 rounded-r-lg text-slate-600 hover:bg-slate-50 transition-colors">1. Introduction</button>
+                <button onclick="nav('outils')" id="nav-outils" class="nav-item text-left px-4 py-3 rounded-r-lg text-slate-600 hover:bg-slate-50 transition-colors">2. Outils Fondamentaux</button>
+                <button onclick="nav('utilitaires')" id="nav-utilitaires" class="nav-item text-left px-4 py-3 rounded-r-lg text-slate-600 hover:bg-slate-50 transition-colors">3. Génériques & Utilitaires</button>
+                <button onclick="nav('declarations')" id="nav-declarations" class="nav-item text-left px-4 py-3 rounded-r-lg text-slate-600 hover:bg-slate-50 transition-colors">4. Déclarations (.d.ts)</button>
+                <button onclick="nav('pratique')" id="nav-pratique" class="nav-item text-left px-4 py-3 rounded-r-lg text-slate-600 hover:bg-slate-50 transition-colors">5. API BookShelf (Pratique)</button>
+                <button onclick="nav('boss')" id="nav-boss" class="nav-item text-left px-4 py-3 rounded-r-lg text-emerald-600 hover:bg-emerald-50 transition-colors font-medium flex items-center gap-2">🏆 Boss Final</button>
+            </nav>
+        </aside>
+
+        <div class="md:hidden p-4 bg-white border-b flex overflow-x-auto gap-2">
+            <button onclick="nav('intro')" class="px-3 py-1 bg-slate-100 rounded-full text-sm whitespace-nowrap">Intro</button>
+            <button onclick="nav('outils')" class="px-3 py-1 bg-slate-100 rounded-full text-sm whitespace-nowrap">Outils</button>
+            <button onclick="nav('utilitaires')" class="px-3 py-1 bg-slate-100 rounded-full text-sm whitespace-nowrap">Génériques</button>
+            <button onclick="nav('declarations')" class="px-3 py-1 bg-slate-100 rounded-full text-sm whitespace-nowrap">Déclarations</button>
+            <button onclick="nav('pratique')" class="px-3 py-1 bg-slate-100 rounded-full text-sm whitespace-nowrap">Pratique</button>
+            <button onclick="nav('boss')" class="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm whitespace-nowrap">Boss</button>
         </div>
-    </main>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            
+            <section id="sec-intro" class="block animate-fade-in">
+                <div class="max-w-3xl">
+                    <h2 class="text-3xl font-bold mb-4">Pourquoi le TypeScript Avancé ?</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Cette section introduit les concepts fondamentaux qui différencient un code TypeScript basique d'une architecture robuste. Dans de gros projets, copier-coller des interfaces similaires devient un cauchemar à maintenir. Le TypeScript avancé résout ce problème avec des types dynamiques, réutilisables et composables (comme des Lego).
+                    </p>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+                        <h3 class="text-lg font-semibold mb-2">Analyse : Utilité vs Complexité</h3>
+                        <p class="text-sm text-slate-500 mb-6">Ce graphique illustre l'impact des différents outils avancés. Les Types Utilitaires offrent une valeur immense pour une complexité modérée.</p>
+                        
+                        <div class="chart-container">
+                            <canvas id="tsImpactChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                        <p class="text-blue-800 font-medium">🎯 L'objectif principal :</p>
+                        <p class="text-blue-700 mt-1">Écrire un code qui s'adapte automatiquement aux changements sans dupliquer les définitions de types.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-outils" class="hidden animate-fade-in">
+                <div class="max-w-3xl">
+                    <h2 class="text-3xl font-bold mb-4">Les Outils Fondamentaux</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Explorez ici les briques de base de la composition de types. Vous découvrirez comment fusionner des entités, créer des tableaux à structure fixe et extraire dynamiquement les clés d'un objet. Cliquez sur les onglets ci-dessous pour explorer chaque concept.
+                    </p>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="flex border-b border-slate-200">
+                            <button onclick="switchTab('outils', 'intersection')" id="tab-intersection" class="tab-btn active flex-1 py-3 text-sm font-medium transition-colors">Intersections (&)</button>
+                            <button onclick="switchTab('outils', 'tuples')" id="tab-tuples" class="tab-btn flex-1 py-3 text-sm font-medium transition-colors bg-slate-50 text-slate-600 hover:bg-slate-100">Tuples</button>
+                            <button onclick="switchTab('outils', 'keyof')" id="tab-keyof" class="tab-btn flex-1 py-3 text-sm font-medium transition-colors bg-slate-50 text-slate-600 hover:bg-slate-100">keyof</button>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div id="content-intersection" class="block">
+                                <h3 class="text-xl font-bold mb-2">Les Types d'Intersection</h3>
+                                <p class="text-slate-600 mb-4">L'opérateur <code>&</code> fusionne plusieurs types. L'objet final doit posséder <strong>toutes</strong> les propriétés combinées.</p>
+                                <pre class="code-block font-mono"><code>type Volant = { ailes: number };
+type Motorise = { moteur: boolean };
+
+<span class="text-slate-400">// L'objet doit avoir des ailes ET un moteur</span>
+type Avion = Volant & Motorise; 
+
+const monAvion: Avion = {
+    ailes: 2,
+    moteur: true
+};</code></pre>
+                            </div>
+
+                            <div id="content-tuples" class="hidden">
+                                <h3 class="text-xl font-bold mb-2">Les Tuples</h3>
+                                <p class="text-slate-600 mb-4">Un tableau dont on connaît la taille exacte et le type à chaque position spécifique. Idéal pour des coordonnées ou le retour de hooks comme `useState`.</p>
+                                <pre class="code-block font-mono"><code><span class="text-slate-400">// Position 0 = X, Position 1 = Y, Position 2 = Z</span>
+type Coordonnees3D = [number, number, number];
+
+const maPosition: Coordonnees3D = [10, 20, 30];
+
+<span class="text-slate-400">// Erreur si on ajoute un 4ème élément ou du texte</span>
+<span class="text-red-400">// const erreur: Coordonnees3D = [1, 2, "Z"];</span></code></pre>
+                            </div>
+
+                            <div id="content-keyof" class="hidden">
+                                <h3 class="text-xl font-bold mb-2">L'opérateur keyof</h3>
+                                <p class="text-slate-600 mb-4">Génère automatiquement une Union (<code>|</code>) de toutes les clés d'un objet sous forme de chaînes de caractères.</p>
+                                <pre class="code-block font-mono"><code>type User = { 
+    id: number; 
+    username: string; 
+    isAdmin: boolean; 
+};
+
+<span class="text-slate-400">// Génère dynamiquement : "id" | "username" | "isAdmin"</span>
+type UserKeys = keyof User; 
+
+function getProperty(key: UserKeys) {
+    <span class="text-slate-400">// Seules ces 3 chaînes sont acceptées</span>
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-utilitaires" class="hidden animate-fade-in">
+                <div class="max-w-4xl">
+                    <h2 class="text-3xl font-bold mb-4">Génériques & Types Utilitaires</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Cette section présente la véritable puissance de TypeScript : la capacité à écrire des types qui s'adaptent (Génériques) et la transformation de types existants (Utilitaires) sans les réécrire. Interagissez avec les boutons ci-dessous pour voir comment transformer un type de base <code>BaseUser</code>.
+                    </p>
+
+                    <div class="mb-8 p-6 bg-slate-800 rounded-xl text-white">
+                        <h3 class="text-blue-400 font-bold mb-2 font-mono text-lg">&lt;T&gt; Les Génériques</h3>
+                        <p class="mb-4 text-slate-300">Des variables pour les types. Une "boîte" qui prendra sa forme à l'utilisation.</p>
+                        <pre class="bg-slate-900 p-4 rounded-lg font-mono text-sm"><code>interface ApiResponse&lt;T&gt; {
+  status: number;
+  message: string;
+  data: T; <span class="text-slate-500">// Le type dynamique</span>
+}
+
+<span class="text-blue-300">const</span> reponse: ApiResponse&lt;<span class="text-emerald-400">number[]</span>&gt; = { 
+  status: 200, 
+  data: [1, 2, 3] 
+};</code></pre>
+                    </div>
+
+                    <h3 class="text-2xl font-bold mb-4 text-slate-800">Transformations interactives</h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <p class="text-sm font-semibold text-slate-500 mb-2 uppercase tracking-wider">Type de base</p>
+                            <pre class="code-block font-mono mb-6"><code>type BaseUser = { 
+  id: string;
+  name: string;
+  age: number; 
+};</code></pre>
+
+                            <p class="text-sm font-semibold text-slate-500 mb-3 uppercase tracking-wider">Sélectionnez un utilitaire</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                <button onclick="updateUtil('partial')" id="btn-partial" class="util-btn active px-4 py-2 border rounded-full text-sm font-medium transition-colors">Partial&lt;T&gt;</button>
+                                <button onclick="updateUtil('omit')" id="btn-omit" class="util-btn px-4 py-2 border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Omit&lt;T, K&gt;</button>
+                                <button onclick="updateUtil('pick')" id="btn-pick" class="util-btn px-4 py-2 border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Pick&lt;T, K&gt;</button>
+                                <button onclick="updateUtil('record')" id="btn-record" class="util-btn px-4 py-2 border border-slate-200 rounded-full text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">Record&lt;K, V&gt;</button>
+                            </div>
+                            
+                            <p id="util-desc" class="text-slate-600 text-sm h-10">Rend toutes les propriétés optionnelles (ajoute un ?). Idéal pour les mises à jour.</p>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-xl p-6 shadow-xl flex flex-col">
+                            <p class="text-sm font-semibold text-slate-400 mb-2 uppercase tracking-wider">Résultat Généré</p>
+                            <div class="flex-1 bg-slate-800 rounded-lg p-4 font-mono text-sm text-emerald-400 flex items-center justify-center border border-slate-700">
+                                <code id="util-result" class="whitespace-pre-wrap">type UserUpdate = {
+  id?: string;
+  name?: string;
+  age?: number;
+};</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-declarations" class="hidden animate-fade-in">
+                <div class="max-w-3xl">
+                    <h2 class="text-3xl font-bold mb-4">Déclarations et Packages (@types)</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Cette section explique comment TypeScript gère les bibliothèques externes et sépare les contrats de types de la logique métier via les fichiers <code>.d.ts</code>. Vous y apprendrez que les types n'alourdissent jamais votre application finale.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-3xl mb-4">🗂️</div>
+                            <h3 class="text-xl font-bold mb-2">Fichiers .d.ts</h3>
+                            <p class="text-slate-600 mb-4 text-sm">Fichiers ne contenant QUE des types (pas de logique). Ils centralisent les contrats de l'application.</p>
+                            <ul class="text-sm text-slate-600 space-y-2">
+                                <li class="flex items-start gap-2"><span class="text-emerald-500">✓</span> Totalement effacés à la compilation.</li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-500">✓</span> Zéro impact sur les performances.</li>
+                                <li class="flex items-start gap-2"><span class="text-emerald-500">✓</span> Permet d'utiliser `import type { ... }`.</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-3xl mb-4">📦</div>
+                            <h3 class="text-xl font-bold mb-2">Packages @types</h3>
+                            <p class="text-slate-600 mb-4 text-sm">Fournissent les types manquants pour les bibliothèques JS classiques (comme Express ou Node) via DefinitelyTyped.</p>
+                            <div class="bg-slate-100 p-3 rounded text-sm font-mono text-slate-800">
+                                npm install --save-dev @types/express
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-pratique" class="hidden animate-fade-in">
+                <div class="max-w-4xl">
+                    <h2 class="text-3xl font-bold mb-4">Cas Pratique : API BookShelf</h2>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        Découvrez comment l'ensemble des concepts précédents s'articulent pour construire la couche de types d'une API de gestion de bibliothèque. Cette section structure le code du plus simple (alias) au plus complexe (services génériques).
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                            <button onclick="toggleAccordion('acc-1')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100 transition-colors">
+                                <span class="font-bold text-slate-800">Étape 1 : Types de Base & Intersections</span>
+                                <span id="icon-acc-1" class="transform transition-transform">&#9660;</span>
+                            </button>
+                            <div id="content-acc-1" class="p-6 border-t border-slate-200 block">
+                                <pre class="code-block font-mono"><code><span class="text-slate-400">// 1. Alias de base</span>
+type EntityId = number | string;
+
+type Timestamped = { createdAt: Date; updatedAt: Date; };
+type HasId = { id: EntityId; };
+
+<span class="text-slate-400">// 2. Intersection : Composition</span>
+type Book = HasId & Timestamped & {
+    title: string;
+    author: string;
+    isbn: string;
+    isAvailable: boolean;
+};
+
+<span class="text-slate-400">// 3. Tuple</span>
+type IsbnParts = [number, string, string];</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                            <button onclick="toggleAccordion('acc-2')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100 transition-colors">
+                                <span class="font-bold text-slate-800">Étape 2 : Types Dérivés (Utilitaires)</span>
+                                <span id="icon-acc-2" class="transform transition-transform -rotate-90">&#9660;</span>
+                            </button>
+                            <div id="content-acc-2" class="p-6 border-t border-slate-200 hidden">
+                                <pre class="code-block font-mono"><code><span class="text-slate-400">// Création : on retire les champs générés par le serveur</span>
+type BookCreatePayload = Omit&lt;Book, "id" | "createdAt" | "updatedAt"&gt;;
+
+<span class="text-slate-400">// Mise à jour : on réutilise la création en rendant tout optionnel</span>
+type BookUpdatePayload = Partial&lt;BookCreatePayload&gt;;
+
+<span class="text-slate-400">// Aperçu : on ne garde que l'essentiel</span>
+type BookPreview = Pick&lt;Book, "id" | "title" | "author"&gt;;</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                            <button onclick="toggleAccordion('acc-3')" class="w-full px-6 py-4 flex justify-between items-center bg-slate-50 hover:bg-slate-100 transition-colors">
+                                <span class="font-bold text-slate-800">Étape 3 : Services et Utilitaires Génériques</span>
+                                <span id="icon-acc-3" class="transform transition-transform -rotate-90">&#9660;</span>
+                            </button>
+                            <div id="content-acc-3" class="p-6 border-t border-slate-200 hidden">
+                                <pre class="code-block font-mono"><code><span class="text-slate-400">// Signatures des requêtes réseau</span>
+function fetchBooks(): Promise&lt;ApiResponse&lt;Book[]&gt;&gt; {}
+function createBook(payload: BookCreatePayload): Promise&lt;ApiResponse&lt;Book&gt;&gt; {}
+
+<span class="text-slate-400">// Utilitaires : K est restreint aux clés valides de T</span>
+function pluck&lt;T, K extends keyof T&gt;(items: T[], key: K): T[K][] {}
+
+<span class="text-slate-400">// Dictionnaire dynamique</span>
+function groupBy&lt;T, K extends keyof T&gt;(items: T[], key: K): Record&lt;string, T[]&gt; {}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-boss" class="hidden animate-fade-in">
+                <div class="max-w-4xl">
+                    <div class="flex items-center gap-4 mb-4">
+                        <h2 class="text-3xl font-bold text-emerald-800">Le Boss Final : EventEmitter Typé</h2>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm font-bold rounded-full border border-emerald-300">Niveau Expert</span>
+                    </div>
+                    <p class="text-slate-600 text-lg mb-8 leading-relaxed">
+                        L'objectif ultime est de créer une classe capable d'émettre des événements avec un <strong>typage dépendant</strong>. La donnée envoyée doit correspondre rigoureusement à l'événement déclaré, bloquant toute erreur avant même l'exécution du code.
+                    </p>
+
+                    <div class="bg-slate-900 rounded-xl p-8 shadow-2xl border border-slate-800 relative overflow-hidden">
+                        
+                        <div class="absolute top-0 right-0 p-4 opacity-10 text-8xl">🐉</div>
+                        
+                        <pre class="font-mono text-sm leading-relaxed"><code class="text-emerald-400"><span class="text-slate-400">// 1. Le dictionnaire d'événements strict</span></code>
+<code class="text-blue-300">type</code> <code class="text-white">BookEvents</code> <code class="text-blue-300">=</code> <code class="text-white">{
+  bookAdded: Book;
+  bookRemoved: { id: EntityId };
+};</code>
+
+<code class="text-slate-400 mt-4 block">// 2. La classe générique avec Typage Dépendant</code>
+<code class="text-blue-300">class</code> <code class="text-emerald-300">EventEmitter</code><code class="text-white">&lt;Events </code><code class="text-blue-300">extends</code><code class="text-white"> Record&lt;string, any&gt;&gt; {</code>
+  
+  <code class="text-slate-400">// K représente l'événement spécifique. </code>
+  <code class="text-slate-400">// Le payload EST le type Events[K].</code>
+  <code class="text-yellow-200">on</code><code class="text-white">&lt;K </code><code class="text-blue-300">extends keyof</code><code class="text-white"> Events&gt;(event: K, handler: (payload: Events[K]) =&gt; </code><code class="text-blue-300">void</code><code class="text-white">) {}</code>
+  
+  <code class="text-yellow-200">emit</code><code class="text-white">&lt;K </code><code class="text-blue-300">extends keyof</code><code class="text-white"> Events&gt;(event: K, payload: Events[K]) {}</code>
+<code class="text-white">}</code></pre>
+                    </div>
+
+                    <div class="mt-8 bg-emerald-50 border border-emerald-200 p-6 rounded-xl flex gap-4 items-start">
+                        <div class="text-2xl mt-1">💡</div>
+                        <div>
+                            <h4 class="font-bold text-emerald-800 mb-1">Pourquoi c'est si puissant ?</h4>
+                            <p class="text-emerald-700 text-sm">
+                                Si un développeur tape <code>emitter.emit("bookAdded", "Dune")</code>, TypeScript affichera immédiatement une erreur car "Dune" (texte) ne correspond pas à l'interface <code>Book</code> requise pour l'événement <code>"bookAdded"</code> dans le dictionnaire <code>BookEvents</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
 
     <script>
-        const appData = [
-            {
-                id: 1,
-                title: "1. Introduction au Build",
-                icon: "🏗️",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🏗️</span> Pourquoi a-t-on besoin d'un Build ?
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Ce module introductif explique la base du problème : Node.js ne peut pas exécuter de TypeScript nativement. Le code doit être <strong class="text-sky-600">compilé</strong> en JavaScript avant exécution. En développement, ce processus doit être automatisé pour éviter les manipulations manuelles à chaque sauvegarde.
-                        </p>
-                        
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-                            <h3 class="text-xl font-semibold mb-6">Le Flux de Travail</h3>
-                            <div class="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 md:space-x-4">
-                                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-center w-full md:w-1/3">
-                                    <div class="text-2xl mb-2">📄</div>
-                                    <div class="font-bold text-indigo-900">Code Source</div>
-                                    <div class="text-sm text-indigo-600">index.ts</div>
-                                </div>
-                                <div class="text-slate-400 text-3xl font-bold hidden md:block">→</div>
-                                <div class="text-slate-400 text-3xl font-bold md:hidden">↓</div>
-                                <div class="bg-sky-50 border border-sky-100 p-4 rounded-xl text-center w-full md:w-1/3 shadow-inner">
-                                    <div class="text-2xl mb-2">⚙️</div>
-                                    <div class="font-bold text-sky-900">Compilateur</div>
-                                    <div class="text-sm text-sky-600">tsc / tsx / esbuild</div>
-                                </div>
-                                <div class="text-slate-400 text-3xl font-bold hidden md:block">→</div>
-                                <div class="text-slate-400 text-3xl font-bold md:hidden">↓</div>
-                                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-center w-full md:w-1/3">
-                                    <div class="text-2xl mb-2">🚀</div>
-                                    <div class="font-bold text-emerald-900">Exécution Node</div>
-                                    <div class="text-sm text-emerald-600">index.js / RAM</div>
-                                </div>
-                            </div>
-                        </div>
+        
+        let tsChart = null;
 
-                        <div class="bg-slate-100 p-4 rounded-xl border-l-4 border-slate-500">
-                            <p class="text-slate-700 font-medium">💡 Objectif : Automatiser ce flux pour que chaque sauvegarde redémarre le serveur instantanément.</p>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 2,
-                title: "2. Rigueur du Code",
-                icon: "🛠️",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🛠️</span> Extended tsconfig
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Le fichier <code>tsconfig.json</code> ne sert pas qu'à compiler, il définit aussi les règles de "santé" de ton code. Découvre l'impact des options avancées ci-dessous.
-                        </p>
+        const sections = ['intro', 'outils', 'utilitaires', 'declarations', 'pratique', 'boss'];
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                                <div class="bg-slate-800 text-white px-4 py-2 font-mono text-sm flex justify-between items-center">
-                                    <span>tsconfig.json</span>
-                                </div>
-                                <div class="p-4 bg-slate-900 text-sky-300 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-{
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
-    <span class="text-yellow-300">"strict": true,</span>
-    <span class="text-yellow-300">"noUnusedLocals": true,</span>
-    <span class="text-yellow-300">"noUnusedParameters": true,</span>
-    <span class="text-yellow-300">"noFallthroughCasesInSwitch": true,</span>
-    <span class="text-yellow-300">"forceConsistentCasingInFileNames": true</span>
-  }
-}
-                                </div>
-                            </div>
-                            
-                            <div class="flex flex-col space-y-3">
-                                <h3 class="font-bold text-slate-700 mb-2">Cliquez pour explorer les règles :</h3>
-                                <button onclick="showRuleDetails('strict')" class="text-left px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-sky-500 hover:shadow-md transition-all font-mono font-bold text-slate-800">strict</button>
-                                <button onclick="showRuleDetails('noUnusedLocals')" class="text-left px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-sky-500 hover:shadow-md transition-all font-mono font-bold text-slate-800">noUnusedLocals</button>
-                                <button onclick="showRuleDetails('noUnusedParameters')" class="text-left px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-sky-500 hover:shadow-md transition-all font-mono font-bold text-slate-800">noUnusedParameters</button>
-                                <button onclick="showRuleDetails('noFallthroughCasesInSwitch')" class="text-left px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-sky-500 hover:shadow-md transition-all font-mono font-bold text-slate-800">noFallthroughCasesInSwitch</button>
-                                <button onclick="showRuleDetails('forceConsistentCasingInFileNames')" class="text-left px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-sky-500 hover:shadow-md transition-all font-mono font-bold text-slate-800">forceConsistentCasingInFileNames</button>
-                            </div>
-                        </div>
+        function nav(sectionId) {
+            
+            sections.forEach(s => {
+                document.getElementById('sec-' + s).classList.add('hidden');
+                document.getElementById('sec-' + s).classList.remove('block');
+                
+                const navBtn = document.getElementById('nav-' + s);
+                if(navBtn) {
+                    if (s === 'boss') {
+                        navBtn.classList.remove('bg-emerald-50', 'border-l-4', 'border-emerald-500');
+                    } else {
+                        navBtn.classList.remove('active', 'bg-slate-50');
+                    }
+                }
+            });
 
-                        <div id="rule-detail-card" class="mt-8 bg-sky-50 border-l-4 border-sky-500 p-6 rounded-r-xl hidden">
-                            <h4 id="rule-title" class="text-xl font-bold text-sky-900 font-mono mb-2"></h4>
-                            <p id="rule-desc" class="text-sky-800 text-lg"></p>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 3,
-                title: "3. L'Approche Traditionnelle",
-                icon: "🕰️",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🕰️</span> L'Approche Traditionnelle
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Avant les outils modernes, le flux nécessitait de gérer deux processus infinis simultanément. <strong>Nodemon</strong> surveillait les fichiers JavaScript compilés, et <strong>Concurrently</strong> permettait de gérer deux terminaux en un seul.
-                        </p>
-
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                            <div>
-                                <h3 class="font-bold text-slate-700 mb-3 flex items-center"><span class="mr-2">1️⃣</span> Configuration nodemon.json</h3>
-                                <div class="code-block">
-{
-  "watch": ["dist"],
-  "ext": "js",
-  "exec": "node dist/index.js"
-}
-                                </div>
-                                <p class="text-sm text-slate-500 mt-2">Nodemon écoute uniquement le dossier <code>dist</code> et réagit aux fichiers <code>.js</code>.</p>
-                            </div>
-                            
-                            <div>
-                                <h3 class="font-bold text-slate-700 mb-3 flex items-center"><span class="mr-2">2️⃣</span> Script package.json</h3>
-                                <div class="code-block">
-{
-  "scripts": {
-    "build:watch": "tsc --watch",
-    "start:dev": "nodemon dist/index.js",
-    "dev": "concurrently \\"npm run build:watch\\" \\"npm run start:dev\\""
-  }
-}
-                                </div>
-                                <p class="text-sm text-slate-500 mt-2">Concurrently lance le compilateur TS en mode watch <strong>ET</strong> le moniteur Nodemon en parallèle.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-amber-50 p-6 rounded-xl border border-amber-200">
-                            <h4 class="font-bold text-amber-800 mb-2">⚠️ Limite de ce modèle :</h4>
-                            <p class="text-amber-700">Cette approche sollicite fortement le disque dur (I/O) car chaque modification nécessite d'écrire un fichier physique dans le dossier <code>dist/</code> avant que Nodemon ne le détecte et relance le serveur.</p>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 4,
-                title: "4. L'Approche Moderne : tsx",
-                icon: "🚀",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🚀</span> tsx (TypeScript Execute)
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            <code>tsx</code> remplace <code>tsc --watch</code>, <code>nodemon</code> et <code>concurrently</code> en une seule commande grâce à <strong>Esbuild</strong>. La compilation se fait en mémoire (RAM), offrant des performances exceptionnelles.
-                        </p>
-
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
-                            <h3 class="text-xl font-semibold text-slate-800 mb-6">Comparaison des Performances (Conceptuelle)</h3>
-                            <div class="chart-container">
-                                <canvas id="performanceChart"></canvas>
-                            </div>
-                            <p class="text-center text-sm text-slate-500 mt-4">Comparaison basée sur l'utilisation du disque (I/O) et le nombre de processus.</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                                <h3 class="font-bold text-slate-800 mb-4">La Simplification du package.json</h3>
-                                <div class="code-block">
-{
-  "scripts": {
-    "start:dev": "tsx watch src/index.ts",
-    "typecheck": "tsc --noEmit --watch"
-  }
-}
-                                </div>
-                            </div>
-                            
-                            <div class="flex flex-col justify-center space-y-4">
-                                <div class="flex items-start">
-                                    <div class="bg-emerald-100 text-emerald-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 shrink-0">✓</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Un seul processus</h4>
-                                        <p class="text-sm text-slate-600">Plus besoin de concurrently.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-emerald-100 text-emerald-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 shrink-0">✓</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Compilation en mémoire</h4>
-                                        <p class="text-sm text-slate-600">Aucun fichier écrit sur le disque (Pas de dossier <code>dist/</code>).</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-amber-100 text-amber-600 rounded-full w-8 h-8 flex items-center justify-center font-bold mr-4 shrink-0">!</div>
-                                    <div>
-                                        <h4 class="font-bold text-slate-800">Typechecking séparé</h4>
-                                        <p class="text-sm text-slate-600"><code>tsx</code> skip l'analyse des types pour la vitesse. <code>typecheck</code> reste nécessaire pour la sécurité.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `
-            },
-            {
-                id: 5,
-                title: "5. Le Duo Dynamique",
-                icon: "🤝",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🤝</span> Nodemon + tsx
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Bien que <code>tsx watch</code> soit excellent, il ignore par défaut certains fichiers (comme <code>.env</code> ou <code>.json</code>). Le combo ultime consiste à utiliser <strong>Nodemon pour la surveillance</strong> et <strong>tsx pour l'exécution</strong>.
-                        </p>
-
-                        <div class="bg-slate-900 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden mb-8 shadow-lg">
-                            <div class="absolute top-0 right-0 bg-sky-500 text-white px-4 py-1 text-xs font-bold rounded-bl-xl">nodemon.json optimisé</div>
-                            <div class="font-mono text-sm md:text-base space-y-4">
-                                <div><span class="text-pink-400">"watch"</span>: <span class="text-green-300">["src", ".env"]</span>, <span class="text-slate-400 ml-4">► Surveille TS et variables d'environnement</span></div>
-                                <div><span class="text-pink-400">"ext"</span>: <span class="text-green-300">"ts,json,env"</span>, <span class="text-slate-400 ml-4">► Réagit à ces extensions</span></div>
-                                <div><span class="text-pink-400">"ignore"</span>: <span class="text-green-300">["src/**/*.test.ts"]</span>, <span class="text-slate-400 ml-4">► Exclut les tests</span></div>
-                                <div><span class="text-pink-400">"exec"</span>: <span class="text-green-300">"tsx src/index.ts"</span> <span class="text-slate-400 ml-4">► Confie l'exécution à tsx</span></div>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold text-slate-800 mb-4">Simulateur d'Événements</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <button onclick="simulateEvent('.env')" class="p-4 bg-white border-2 border-slate-200 rounded-xl hover:border-sky-500 transition text-center focus:outline-none">
-                                <div class="text-2xl mb-1">🔐</div>
-                                <div class="font-bold text-slate-700">Modification .env</div>
-                            </button>
-                            <button onclick="simulateEvent('.ts')" class="p-4 bg-white border-2 border-slate-200 rounded-xl hover:border-sky-500 transition text-center focus:outline-none">
-                                <div class="text-2xl mb-1">🟦</div>
-                                <div class="font-bold text-slate-700">Modification .ts</div>
-                            </button>
-                            <button onclick="simulateEvent('.test.ts')" class="p-4 bg-white border-2 border-slate-200 rounded-xl hover:border-sky-500 transition text-center focus:outline-none">
-                                <div class="text-2xl mb-1">🧪</div>
-                                <div class="font-bold text-slate-700">Modification .test.ts</div>
-                            </button>
-                        </div>
-                        
-                        <div id="event-result" class="mt-6 p-4 rounded-xl text-center font-bold text-lg hidden transition-all"></div>
-                    </div>
-                `
-            },
-            {
-                id: 6,
-                title: "6. Challenge Final",
-                icon: "🏆",
-                render: () => `
-                    <div class="fade-in">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-4 flex items-center">
-                            <span class="text-4xl mr-3">🏆</span> Challenge Pratique
-                        </h2>
-                        <p class="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Objectif : Mettre en place un environnement qui recharge l'application quand le code <strong>ET</strong> les données (JSON) changent.
-                        </p>
-
-                        <div class="flex flex-col lg:flex-row gap-8">
-                            <div class="w-full lg:w-1/2 space-y-6">
-                                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-slate-700 mb-2 font-mono">superheroes.json</h3>
-                                    <div class="bg-slate-50 p-3 rounded border border-slate-100 font-mono text-sm text-slate-600 max-h-40 overflow-y-auto">
-{
-  "superheroes": [
-    "Spider-Man", "Iron Man", 
-    "Captain America", "Thor"...
-  ]
-}
-                                    </div>
-                                </div>
-                                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                                    <h3 class="font-bold text-slate-700 mb-2 font-mono">src/main.ts</h3>
-                                    <div class="bg-slate-50 p-3 rounded border border-slate-100 font-mono text-sm text-slate-600 max-h-40 overflow-y-auto">
-import marvelData from "./superheroes.json";
-function logSuperheroCount(data: SuperheroData) {
-  console.log(data.superheroes.length);
-}
-logSuperheroCount(marvelData);
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="w-full lg:w-1/2 bg-indigo-900 text-white p-8 rounded-2xl shadow-lg flex flex-col justify-center">
-                                <h3 class="text-2xl font-bold mb-6 text-indigo-100">La Solution</h3>
-                                <div class="space-y-6">
-                                    <div>
-                                        <div class="text-xs text-indigo-300 font-bold uppercase tracking-wider mb-1">nodemon.json</div>
-                                        <div class="code-block bg-indigo-950 border border-indigo-800 text-indigo-200">
-{
-  "watch": ["src", ".env"],
-  "ext": "ts,json,env",
-  "exec": "tsx src/main.ts"
-}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="text-xs text-indigo-300 font-bold uppercase tracking-wider mb-1">package.json</div>
-                                        <div class="code-block bg-indigo-950 border border-indigo-800 text-indigo-200">
-{
-  "scripts": {
-    "dev": "nodemon",
-    "typecheck": "tsc --noEmit --watch"
-  }
-}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mt-6 p-4 bg-indigo-800/50 rounded-xl text-indigo-100 border border-indigo-700">
-                                    <strong>Résumé :</strong> Utilise Nodemon pour la surveillance flexible et tsx pour l'exécution rapide.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `
+            
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            document.getElementById('sec-' + sectionId).classList.add('block');
+            
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if(activeNav) {
+                if (sectionId === 'boss') {
+                    activeNav.classList.add('bg-emerald-50', 'border-l-4', 'border-emerald-500');
+                } else {
+                    activeNav.classList.add('active');
+                }
             }
-        ];
 
-        const rulesData = {
-            'strict': 'Active toutes les vérifications strictes. Garantit le plus haut niveau de sécurité de type possible.',
-            'noUnusedLocals': 'Les variables locales non utilisées génèrent une erreur. Garde un code propre et évite d\'encombrer la mémoire.',
-            'noUnusedParameters': 'Les paramètres de fonctions non utilisés génèrent une erreur. S\'assure que les signatures de fonctions sont précises.',
-            'noFallthroughCasesInSwitch': 'Empêche l\'exécution de passer d\'un "case" à un autre sans un "break" ou "return" dans les structures switch.',
-            'forceConsistentCasingInFileNames': 'Force le respect de la casse des noms de fichiers lors des imports pour éviter les problèmes entre Windows et Linux.'
+            
+            const index = sections.indexOf(sectionId);
+            const progress = ((index + 1) / sections.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            
+            if (sectionId === 'intro' && !tsChart) {
+                initChart();
+            }
+        }
+
+        function switchTab(section, tabId) {
+            
+            const tabs = ['intersection', 'tuples', 'keyof'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                const content = document.getElementById(`content-${t}`);
+                
+                btn.classList.remove('active', 'bg-blue-600', 'text-white');
+                btn.classList.add('bg-slate-50', 'text-slate-600');
+                
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+
+            
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('bg-slate-50', 'text-slate-600');
+            activeBtn.classList.add('active', 'bg-blue-600', 'text-white');
+            
+            const activeContent = document.getElementById(`content-${tabId}`);
+            activeContent.classList.remove('hidden');
+            activeContent.classList.add('block');
+        }
+
+        const utilData = {
+            partial: {
+                code: `type UserUpdate = {\n  id?: string;\n  name?: string;\n  age?: number;\n};`,
+                desc: "Rend toutes les propriétés optionnelles (ajoute un ?). Idéal pour les mises à jour."
+            },
+            omit: {
+                code: `type UserCreate = {\n  name: string;\n  age: number;\n};`,
+                desc: "Supprime les clés spécifiées (ici 'id'). Utile pour la création de données gérées par le serveur."
+            },
+            pick: {
+                code: `type UserPreview = {\n  id: string;\n  name: string;\n};`,
+                desc: "Ne garde QUE les clés spécifiées. Parfait pour des résumés visuels ou listes."
+            },
+            record: {
+                code: `type UserDict = {\n  [key: string]: {\n    id: string;\n    name: string;\n    age: number;\n  }\n};`,
+                desc: "Crée un dictionnaire. Ici, les clés sont du texte, et les valeurs sont le BaseUser complet."
+            }
         };
 
-        let currentModuleId = 1;
-        let chartInstance = null;
-
-        function renderNavigation() {
-            const navContainer = document.getElementById('nav-container');
-            navContainer.innerHTML = '';
+        function updateUtil(type) {
             
-            appData.forEach(module => {
-                const btn = document.createElement('button');
-                btn.className = `nav-item w-full text-left px-6 py-3 font-medium focus:outline-none flex items-center ${currentModuleId === module.id ? 'nav-active' : 'text-slate-400'}`;
-                btn.onclick = () => selectModule(module.id);
-                btn.innerHTML = `<span class="w-6 text-center mr-3">${module.icon}</span> <span class="truncate">${module.title.substring(3)}</span>`;
-                navContainer.appendChild(btn);
+            const btns = ['partial', 'omit', 'pick', 'record'];
+            btns.forEach(b => {
+                const btn = document.getElementById(`btn-${b}`);
+                btn.classList.remove('active', 'bg-blue-50', 'border-blue-600', 'text-blue-700');
+                btn.classList.add('border-slate-200', 'text-slate-600');
             });
-            updateProgress();
+
+            
+            const activeBtn = document.getElementById(`btn-${type}`);
+            activeBtn.classList.remove('border-slate-200', 'text-slate-600');
+            activeBtn.classList.add('active', 'bg-blue-50', 'border-blue-600', 'text-blue-700');
+
+            
+            document.getElementById('util-result').textContent = utilData[type].code;
+            document.getElementById('util-desc').textContent = utilData[type].desc;
         }
 
-        function updateProgress() {
-            const progress = ((currentModuleId) / appData.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-        }
-
-        function selectModule(id) {
-            currentModuleId = id;
-            renderNavigation();
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
             
-            const mainContent = document.getElementById('main-content');
-            const module = appData.find(m => m.id === id);
-            
-            mainContent.innerHTML = module.render();
-
-            if (id === 4) {
-                setTimeout(initChart, 50); 
-            }
-        }
-
-        function showRuleDetails(ruleName) {
-            const card = document.getElementById('rule-detail-card');
-            const title = document.getElementById('rule-title');
-            const desc = document.getElementById('rule-desc');
-            
-            card.classList.remove('hidden');
-            card.classList.add('fade-in');
-            
-            title.textContent = `"${ruleName}": true`;
-            desc.textContent = rulesData[ruleName];
-        }
-
-        function simulateEvent(fileType) {
-            const resultDiv = document.getElementById('event-result');
-            resultDiv.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-slate-200', 'text-slate-600', 'bg-sky-100', 'text-sky-800');
-            
-            if (fileType === '.env' || fileType === '.ts') {
-                resultDiv.classList.add('bg-emerald-100', 'text-emerald-800');
-                resultDiv.innerHTML = `✅ Modification détectée par <strong>Nodemon</strong> sur <code>${fileType}</code>. Exécution de <code>tsx</code> lancée !`;
-            } else if (fileType === '.test.ts') {
-                resultDiv.classList.add('bg-slate-200', 'text-slate-600');
-                resultDiv.innerHTML = `🛑 Modification ignorée. La règle d'exclusion de Nodemon s'applique sur <code>.test.ts</code>.`;
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
             }
         }
 
         function initChart() {
-            const ctx = document.getElementById('performanceChart');
-            if (!ctx) return;
+            const ctx = document.getElementById('tsImpactChart').getContext('2d');
+            
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-
-            chartInstance = new Chart(ctx, {
+            tsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['tsc + nodemon (Ancien)', 'tsx watch (Moderne)'],
+                    labels: ['Intersections (&)', 'Tuples', 'keyof', 'Génériques (<T>)', 'Utilitaires (Omit...)', 'Fichiers .d.ts'],
                     datasets: [
                         {
-                            label: 'Nombre de Processus',
-                            data: [2, 1],
-                            backgroundColor: '#94a3b8',
-                            borderRadius: 6
+                            label: 'Utilité / Fréquence d\'usage',
+                            data: [70, 45, 60, 95, 90, 80],
+                            backgroundColor: '#3B82F6', 
+                            borderRadius: 4
                         },
                         {
-                            label: 'Fichiers écrits sur Disque (I/O)',
-                            data: [100, 0],
-                            backgroundColor: '#38bdf8',
-                            borderRadius: 6
+                            label: 'Complexité d\'apprentissage',
+                            data: [30, 20, 40, 85, 40, 25],
+                            backgroundColor: '#cbd5e1', 
+                            borderRadius: 4
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    if(context.datasetIndex === 1 && context.raw === 100) return " Beaucoup (Dossier dist/)";
-                                    if(context.datasetIndex === 1 && context.raw === 0) return " Aucun (En Mémoire)";
-                                    return " " + context.raw;
-                                }
-                            }
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { display: false },
-                            grid: { display: false }
+                            max: 100,
+                            grid: {
+                                color: '#f1f5f9'
+                            }
                         },
                         x: {
-                            grid: { display: false }
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: '#1E293B',
+                            padding: 12,
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 }
+                        },
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
                         }
                     }
                 }
             });
         }
 
-        renderNavigation();
-        selectModule(currentModuleId);
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+        });
+
     </script>
 </body>
 </html>
