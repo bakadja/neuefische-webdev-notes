@@ -7,6 +7,7 @@ Interactive web development notes and learning resources from the Advanced Softw
 ## 📚 Curriculum & Notes
 
 ### 🟦 TypeScript
+- [TypeScript Setup](typescript/00-typescript-setup/notes.html)
 - [TypeScript Basics](typescript/01-typescript-basics/notes.html)
 - [TypeScript Client Side](typescript/02-typescript-client-side/notes.html)
 - [TypeScript Advanced](typescript/03-typescript-advanced/notes.html)
