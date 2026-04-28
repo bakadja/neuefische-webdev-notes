@@ -1,37 +1,725 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Express Basics - Course Notes</title>
+    <title>Masterclass: API REST avec Express & TypeScript</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals (Stone) with Soft Teal and Amber accents for a calm, focused learning environment. -->
+    <!-- Application Structure Plan: A 'Masterclass Dashboard' structured as an interactive learning path. The sidebar provides global navigation, while the main content area updates dynamically. This non-linear structure allows users to jump between concepts (e.g., reviewing HTTP codes while looking at the final code). Interactive cards and tabs are used to condense complex information (like CRUD operations or Best Practices) into digestible, clickable chunks, improving usability over a long scrolling document. -->
+    <!-- Visualization & Content Choices: 1. Skills Radar (Accueil) -> Goal: Inform on course scope -> Viz: Chart.js Radar -> Interaction: Hover for tooltips -> Justification: Gives immediate visual overview of learning objectives. 2. HTTP Status Donut (Chap 3) -> Goal: Organize/Compare HTTP classes -> Viz: Chart.js Donut -> Interaction: Hover slices to highlight categories -> Justification: Breaks down a dry list into a clickable, visual categorisation. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        :root { --bg: #0f172a; --surface: #1e293b; --border: #334155; --text: #e2e8f0; --text-muted: #94a3b8; --accent: #10b981; --accent-light: #34d399; --code-bg: #0d1117; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; padding: 2rem; max-width: 900px; margin: 0 auto; }
-        h1 { font-size: 2.2rem; background: linear-gradient(135deg, var(--accent), #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; }
-        .meta { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
-        h2 { color: var(--accent-light); margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-        p { margin-bottom: 1rem; }
-        code { background: var(--code-bg); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.9em; color: var(--accent-light); }
-        pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; overflow-x: auto; margin: 1rem 0; }
-        pre code { background: none; padding: 0; color: var(--text); }
-        ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
-        li { margin-bottom: 0.4rem; }
-        .note { background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 8px 8px 0; margin: 1rem 0; }
-        .back-link { display: inline-block; margin-bottom: 1.5rem; color: var(--accent-light); text-decoration: none; font-size: 0.9rem; }
-        .back-link:hover { text-decoration: underline; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        body {
+            background-color: #faf9f6;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-item {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-item.active {
+            background-color: #0f766e;
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .nav-item:hover:not(.active) {
+            background-color: #e7e5e4;
+        }
+        .card-hover {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        pre::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
     </style>
 </head>
-<body>
-    <a href="../../index.html" class="back-link">← Back to all notes</a>
-    <h1>Express Basics</h1>
-    <p class="meta">📅 Week 3 — Monday, 27.04.2026</p>
+<body class="flex flex-col md:flex-row min-h-screen font-sans selection:bg-teal-200 selection:text-teal-900">
 
-    <h2>📝 Mes Notes</h2>
-    <p><!-- Ajoute tes notes ici --></p>
+    <nav class="w-full md:w-64 lg:w-72 bg-stone-100 border-r border-stone-200 flex flex-col h-auto md:h-screen sticky top-0 shadow-sm z-20">
+        <div class="p-6 border-b border-stone-200 bg-white">
+            <h1 class="text-xl font-bold text-slate-800 leading-tight">🚀 Masterclass API REST</h1>
+            <p class="text-xs text-stone-500 mt-2">Node.js, Express & TypeScript</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4" id="nav-container">
+        </div>
+    </nav>
 
-    <div class="note">
-        <strong>💡 Rappel :</strong> Express est un framework minimaliste pour Node.js permettant de créer des serveurs web.
-    </div>
+    <main class="flex-1 p-6 md:p-10 lg:p-14 overflow-y-auto bg-[#faf9f6]" id="main-content">
+    </main>
+
+    <script>
+        const appData = {
+            home: {
+                id: 'home',
+                icon: '🏠',
+                title: 'Accueil & Synthèse',
+                intro: "Bienvenue dans l'interface interactive de la Masterclass API REST. Cette section d'accueil vous offre une vue d'ensemble des compétences que vous allez acquérir. Naviguez via le menu latéral pour explorer chaque concept en profondeur, des fondations jusqu'au code final.",
+                content: `
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-lg font-semibold text-teal-700 mb-4">Objectifs de la formation</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <span class="text-xl mr-3">🏗️</span>
+                                    <div>
+                                        <p class="font-medium">Fondations Solides</p>
+                                        <p class="text-sm text-stone-600">Comprendre le cycle requête/réponse avec Node.js et Express.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-xl mr-3">🛠️</span>
+                                    <div>
+                                        <p class="font-medium">Environnement Moderne</p>
+                                        <p class="text-sm text-stone-600">Intégrer TypeScript pour un typage statique et une meilleure autocomplétion.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-xl mr-3">🗃️</span>
+                                    <div>
+                                        <p class="font-medium">Architecture RESTful</p>
+                                        <p class="text-sm text-stone-600">Maîtriser les opérations CRUD et la sémantique HTTP.</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-xl mr-3">💎</span>
+                                    <div>
+                                        <p class="font-medium">Code Qualité</p>
+                                        <p class="text-sm text-stone-600">Appliquer les meilleures pratiques (Early returns, Spread operator).</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col items-center">
+                            <h3 class="text-lg font-semibold text-teal-700 mb-4 w-full text-left">Matrice des Compétences</h3>
+                            <div class="chart-container">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            chap1: {
+                id: 'chap1',
+                icon: '🏗️',
+                title: 'Chapitre 1 : Les Fondations',
+                intro: "Cette section explore les briques de base de notre application. Elle détaille l'écosystème Node.js et Express, ainsi que le concept vital du cycle Requête/Réponse qui régit toutes les interactions sur le Web.",
+                content: `
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-3 border-b border-stone-100 pb-2">1.1 L'Écosystème</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 bg-stone-50 rounded-lg">
+                                    <p class="font-bold text-teal-700 mb-1">Node.js</p>
+                                    <p class="text-sm text-stone-700">L'environnement qui permet d'exécuter du JavaScript côté serveur (en dehors du navigateur Web).</p>
+                                </div>
+                                <div class="p-4 bg-stone-50 rounded-lg">
+                                    <p class="font-bold text-teal-700 mb-1">Express.js</p>
+                                    <p class="text-sm text-stone-700">Un framework minimaliste par-dessus Node.js qui facilite énormément la création de serveurs web et d'API. Il gère le routage et simplifie la manipulation des requêtes.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-3 border-b border-stone-100 pb-2">1.2 Le cycle Requête / Réponse</h3>
+                            <p class="text-sm text-stone-600 mb-4">Le web fonctionne sur un modèle Client-Serveur. Voici comment ils communiquent :</p>
+                            <div class="flex flex-col md:flex-row items-center justify-center gap-4 bg-slate-50 p-6 rounded-lg border border-slate-200">
+                                <div class="text-center w-full md:w-1/3">
+                                    <div class="text-4xl mb-2">📱</div>
+                                    <p class="font-bold text-slate-700">Client</p>
+                                    <p class="text-xs text-stone-500">Navigateur, App Mobile</p>
+                                </div>
+                                <div class="flex flex-col items-center w-full md:w-1/3">
+                                    <div class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full mb-2 w-full text-center">req (Request) &#9654;</div>
+                                    <div class="text-xs text-stone-500 mb-2">URL, Paramètres, req.body</div>
+                                    <div class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mt-2 w-full text-center">&#9664; res (Response)</div>
+                                    <div class="text-xs text-stone-500 mt-2">Statut HTTP, res.json()</div>
+                                </div>
+                                <div class="text-center w-full md:w-1/3">
+                                    <div class="text-4xl mb-2">🖥️</div>
+                                    <p class="font-bold text-slate-700">Serveur</p>
+                                    <p class="text-xs text-stone-500">Node.js + Express</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-3 border-b border-stone-100 pb-2">1.3 Le Routage (Routing)</h3>
+                            <p class="text-sm text-stone-700 mb-3">Le routage est la façon dont l'application répond à une demande client vers un point d'accès spécifique (URI/URL) et une méthode HTTP spécifique.</p>
+                            <div class="bg-slate-800 p-4 rounded-lg font-mono text-sm text-stone-200">
+                                <span class="text-teal-400">app</span>.<span class="text-amber-300">METHOD</span>(<span class="text-green-300">PATH</span>, <span class="text-blue-300">HANDLER_FUNCTION</span>)
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            chap2: {
+                id: 'chap2',
+                icon: '🛠️',
+                title: 'Chapitre 2 : Environnement TypeScript',
+                intro: "Ce module présente l'intégration de TypeScript. Vous comprendrez l'importance du typage statique pour la fiabilité du code, ainsi que les outils essentiels pour maintenir un flux de développement rapide et fluide.",
+                content: `
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 flex items-center"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mr-3">TS</span> Pourquoi TypeScript ?</h3>
+                            <p class="text-stone-700 mb-4">TypeScript est un sur-ensemble de JavaScript qui ajoute le <strong>typage statique</strong>.</p>
+                            <ul class="list-none space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-teal-600 mr-2">&#10003;</span>
+                                    <span class="text-stone-700">Définir la forme exacte des données grâce aux <strong>Interfaces</strong>.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-teal-600 mr-2">&#10003;</span>
+                                    <span class="text-stone-700">Détecter les erreurs avant même d'exécuter le code.</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-teal-600 mr-2">&#10003;</span>
+                                    <span class="text-stone-700">Avoir une auto-complétion intelligente dans l'éditeur de code.</span>
+                                </li>
+                            </ul>
+                            <div class="mt-4 bg-slate-800 p-4 rounded-lg font-mono text-sm text-stone-200">
+                                <span class="text-purple-400">interface</span> <span class="text-amber-300">Bookmark</span> {<br>
+                                &nbsp;&nbsp;id: <span class="text-blue-300">number</span>;<br>
+                                &nbsp;&nbsp;url: <span class="text-blue-300">string</span>;<br>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4">L'outillage de développement</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="border border-red-200 bg-red-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-red-700 mb-2">Le Problème</h4>
+                                    <p class="text-sm text-stone-700">Node.js ne comprend pas le TypeScript nativement. Il faut compiler le <code>.ts</code> en <code>.js</code> (tsc), ce qui est lent en développement.</p>
+                                </div>
+                                <div class="border border-teal-200 bg-teal-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-teal-700 mb-2">La Solution : Combo Gagnant</h4>
+                                    <ul class="text-sm text-stone-700 space-y-2">
+                                        <li><strong>ts-node :</strong> Exécute le TypeScript à la volée, directement en mémoire.</li>
+                                        <li><strong>nodemon :</strong> Surveille les fichiers et redémarre le serveur automatiquement à chaque sauvegarde.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            chap3: {
+                id: 'chap3',
+                icon: '🔗',
+                title: 'Chapitre 3 : Middlewares & Statuts',
+                intro: "Découvrez le concept central des middlewares dans Express, ces fonctions qui interceptent les requêtes. Cette section cartographie également les codes de statut HTTP, essentiels pour communiquer le résultat d'une opération au client.",
+                content: `
+                    <div class="space-y-6 mt-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-3 border-b border-stone-100 pb-2">Le concept de Middleware</h3>
+                            <p class="text-stone-700 mb-4">Un middleware est une fonction qui intercepte la requête (<code class="bg-stone-100 px-1 rounded">req</code>) avant qu'elle n'atteigne ta route finale, fait un traitement, puis passe le relais avec <code class="bg-stone-100 px-1 rounded">next()</code>.</p>
+                            
+                            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4">
+                                <p class="font-bold text-amber-800 mb-1">La règle d'or : L'ordre d'exécution</p>
+                                <p class="text-sm text-amber-900">Express lit le fichier de <strong>haut en bas</strong>. Un middleware global (<code class="bg-amber-100 px-1 rounded">app.use</code>) doit toujours être placé <strong>tout en haut</strong>, avant les routes, sinon il arrivera trop tard.</p>
+                            </div>
+
+                            <div class="bg-slate-50 border border-slate-200 p-4 rounded-lg">
+                                <p class="font-bold text-slate-800 mb-2">Le middleware indispensable</p>
+                                <p class="text-sm text-stone-600 mb-2">Par défaut, Express ne sait pas lire les données JSON envoyées par le client. Ce middleware traduit le JSON en objet JavaScript et le range dans <code class="bg-stone-200 px-1 rounded">req.body</code>.</p>
+                                <div class="bg-slate-800 p-3 rounded font-mono text-sm text-stone-200">
+                                    <span class="text-teal-400">app</span>.<span class="text-blue-300">use</span>(<span class="text-teal-400">express</span>.<span class="text-blue-300">json</span>());
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col items-center">
+                            <h3 class="text-xl font-semibold text-slate-800 mb-4 w-full text-left">Les Codes de Statut HTTP</h3>
+                            <p class="text-sm text-stone-600 w-full text-left mb-4">Chaque réponse HTTP inclut un code à 3 chiffres. La classe (premier chiffre) définit le type de résultat.</p>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                            <div class="w-full mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-3 border-l-4 border-green-500 bg-stone-50 rounded">
+                                    <p class="font-bold text-green-700">2xx (Succès)</p>
+                                    <p class="text-xs text-stone-600 mt-1">200 OK (Standard), 201 Created (Création), 204 No Content (Suppression réussie).</p>
+                                </div>
+                                <div class="p-3 border-l-4 border-amber-500 bg-stone-50 rounded">
+                                    <p class="font-bold text-amber-700">4xx (Erreur Client)</p>
+                                    <p class="text-xs text-stone-600 mt-1">400 Bad Request (Données invalides), 401/403 (Auth), 404 Not Found.</p>
+                                </div>
+                                <div class="p-3 border-l-4 border-red-500 bg-stone-50 rounded md:col-span-2">
+                                    <p class="font-bold text-red-700">5xx (Erreur Serveur)</p>
+                                    <p class="text-xs text-stone-600 mt-1">500 Internal Error (Le code a crashé), 503 Unavailable.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            chap4: {
+                id: 'chap4',
+                icon: '🗃️',
+                title: 'Chapitre 4 : Architecture CRUD',
+                intro: "Le cœur de toute API REST : le CRUD (Create, Read, Update, Delete). Cette vue interactive vous permet d'explorer les spécificités de chaque opération, leurs méthodes HTTP associées et leurs statuts attendus.",
+                content: `
+                    <div class="mt-6">
+                        <p class="text-stone-700 mb-6">Une API REST manipule des ressources via 4 opérations fondamentales associées à des méthodes HTTP précises.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <div class="bg-white border border-stone-200 rounded-xl overflow-hidden card-hover">
+                                <div class="bg-green-600 px-4 py-2 flex justify-between items-center text-white">
+                                    <span class="font-bold text-lg">Create (C)</span>
+                                    <span class="bg-white text-green-700 text-xs font-bold px-2 py-1 rounded">POST</span>
+                                </div>
+                                <div class="p-5">
+                                    <p class="text-sm text-stone-600 mb-3">Créer une nouvelle ressource.</p>
+                                    <div class="bg-stone-50 p-3 rounded text-sm mb-3">
+                                        <p><span class="text-stone-400">Route:</span> <code class="text-slate-800">/ressources</code></p>
+                                        <p><span class="text-stone-400">Statut:</span> <code class="text-green-600 font-bold">201 Created</code></p>
+                                    </div>
+                                    <p class="text-xs text-stone-500 border-t border-stone-100 pt-2"><strong>Action:</strong> Lire req.body, valider, créer ID, sauvegarder.</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-stone-200 rounded-xl overflow-hidden card-hover">
+                                <div class="bg-blue-600 px-4 py-2 flex justify-between items-center text-white">
+                                    <span class="font-bold text-lg">Read (R)</span>
+                                    <span class="bg-white text-blue-700 text-xs font-bold px-2 py-1 rounded">GET</span>
+                                </div>
+                                <div class="p-5">
+                                    <p class="text-sm text-stone-600 mb-3">Lire une ou plusieurs ressources.</p>
+                                    <div class="bg-stone-50 p-3 rounded text-sm mb-3 space-y-1">
+                                        <p><span class="text-stone-400">Tout:</span> <code class="text-slate-800">/ressources</code></p>
+                                        <p><span class="text-stone-400">Unique:</span> <code class="text-slate-800">/ressources/:id</code></p>
+                                        <p><span class="text-stone-400">Statut:</span> <code class="text-blue-600 font-bold">200 OK</code></p>
+                                    </div>
+                                    <p class="text-xs text-stone-500 border-t border-stone-100 pt-2"><strong>Action:</strong> Filtrer, rechercher, renvoyer via res.json().</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-stone-200 rounded-xl overflow-hidden card-hover">
+                                <div class="bg-amber-500 px-4 py-2 flex justify-between items-center text-white">
+                                    <span class="font-bold text-lg">Update (U)</span>
+                                    <span class="bg-white text-amber-700 text-xs font-bold px-2 py-1 rounded">PATCH / PUT</span>
+                                </div>
+                                <div class="p-5">
+                                    <p class="text-sm text-stone-600 mb-3">Mettre à jour une ressource existante.</p>
+                                    <div class="bg-stone-50 p-3 rounded text-sm mb-3">
+                                        <p><span class="text-stone-400">Route:</span> <code class="text-slate-800">/ressources/:id</code></p>
+                                        <p><span class="text-stone-400">Statut:</span> <code class="text-amber-600 font-bold">200 OK</code></p>
+                                    </div>
+                                    <p class="text-xs text-stone-500 border-t border-stone-100 pt-2"><strong>Action:</strong> Fusionner anciennes et nouvelles données (PATCH = partiel).</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-stone-200 rounded-xl overflow-hidden card-hover">
+                                <div class="bg-red-600 px-4 py-2 flex justify-between items-center text-white">
+                                    <span class="font-bold text-lg">Delete (D)</span>
+                                    <span class="bg-white text-red-700 text-xs font-bold px-2 py-1 rounded">DELETE</span>
+                                </div>
+                                <div class="p-5">
+                                    <p class="text-sm text-stone-600 mb-3">Supprimer une ressource spécifique.</p>
+                                    <div class="bg-stone-50 p-3 rounded text-sm mb-3">
+                                        <p><span class="text-stone-400">Route:</span> <code class="text-slate-800">/ressources/:id</code></p>
+                                        <p><span class="text-stone-400">Statut:</span> <code class="text-red-600 font-bold">204 No Content</code></p>
+                                    </div>
+                                    <p class="text-xs text-stone-500 border-t border-stone-100 pt-2"><strong>Action:</strong> Supprimer l'élément. Utiliser res.send() car pas de retour.</p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `
+            },
+            chap5: {
+                id: 'chap5',
+                icon: '🧲',
+                title: 'Chapitre 5 : Paramètres & URL',
+                intro: "Comprendre comment extraire des variables depuis l'URL est crucial. Cette section confronte deux méthodes : les paramètres de route pour identifier, et les paramètres de requête pour filtrer.",
+                content: `
+                    <div class="mt-6">
+                        <div class="flex flex-col lg:flex-row gap-6">
+                            <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-stone-200 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-bl-lg">Identifier</div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-4">Route Params</h3>
+                                <p class="text-sm text-stone-600 mb-4">Font partie intégrante de la structure de l'URL. Essentiels pour cibler un élément précis.</p>
+                                
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide">Définition</p>
+                                        <code class="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm">/bookmarks/:id</code>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide">URL Visiteé</p>
+                                        <code class="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm">/bookmarks/42</code>
+                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded mt-2">
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1">Extraction JS</p>
+                                        <code class="text-sm text-stone-200">const id = Number(<span class="text-teal-400">req.params.id</span>);</code>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 bg-white p-6 rounded-xl shadow-sm border border-stone-200 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-bl-lg">Filtrer</div>
+                                <h3 class="text-xl font-bold text-slate-800 mb-4">Query Strings</h3>
+                                <p class="text-sm text-stone-600 mb-4">Ajoutés à la fin de l'URL après un point d'interrogation (?). Utilisés pour trier, filtrer ou paginer.</p>
+                                
+                                <div class="space-y-3">
+                                    <div>
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide">Définition</p>
+                                        <code class="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm">/bookmarks</code>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide">URL Visiteé</p>
+                                        <code class="bg-slate-100 text-slate-800 px-2 py-1 rounded text-sm">/bookmarks?tag=node</code>
+                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded mt-2">
+                                        <p class="text-xs font-bold text-stone-400 uppercase tracking-wide mb-1">Extraction JS</p>
+                                        <code class="text-sm text-stone-200">const tag = <span class="text-teal-400">req.query.tag</span>;</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            chap6: {
+                id: 'chap6',
+                icon: '💎',
+                title: 'Chapitre 6 : Best Practices',
+                intro: "Un code fonctionnel est une chose, un code de qualité professionnelle en est une autre. Ce module résume les meilleures pratiques JavaScript et TypeScript appliquées lors du développement de notre API.",
+                content: `
+                    <div class="mt-6 grid grid-cols-1 gap-4">
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h4 class="font-bold text-teal-700 text-lg mb-2 flex items-center"><span class="mr-2">↪️</span> Early Returns</h4>
+                            <p class="text-sm text-stone-700 mb-3">Vérifier les erreurs en premier et utiliser <code class="bg-stone-100 px-1">return</code> pour stopper la fonction immédiatement, évitant les longs blocs if/else.</p>
+                            <div class="bg-slate-800 p-3 rounded font-mono text-sm text-stone-300">
+                                <span class="text-purple-400">if</span> (!body.title) {<br>
+                                &nbsp;&nbsp;<span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Title missing"</span> });<br>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h4 class="font-bold text-teal-700 text-lg mb-2 flex items-center"><span class="mr-2">✨</span> Le Spread Operator (...)</h4>
+                            <p class="text-sm text-stone-700 mb-3">Outil parfait pour le PATCH. Permet de fusionner des objets. Le dernier placé écrase les valeurs du premier.</p>
+                            <div class="bg-slate-800 p-3 rounded font-mono text-sm text-stone-300">
+                                <span class="text-purple-400">const</span> updatedBookmark = { ...oldBookmark, ...body };
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h4 class="font-bold text-teal-700 text-lg mb-2 flex items-center"><span class="mr-2">🛡️</span> Sécurité et Typage</h4>
+                            <ul class="text-sm text-stone-700 space-y-2 list-disc pl-5">
+                                <li><strong>ID Sécurisé :</strong> Ne pas utiliser <code class="bg-stone-100 px-1">length + 1</code>. Utiliser <code class="bg-stone-100 px-1">Math.max</code> pour trouver le plus grand ID.</li>
+                                <li><strong>Laisser TS travailler :</strong> Éviter <code class="bg-stone-100 px-1">as Type</code>. Utiliser des conditions pour prouver à TS que la variable est valide.</li>
+                                <li><strong>Méthodes de tableaux :</strong> Maîtriser <code class="bg-stone-100 px-1">find</code>, <code class="bg-stone-100 px-1">filter</code>, <code class="bg-stone-100 px-1">map</code>, et <code class="bg-stone-100 px-1">findIndex + splice</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            chap7: {
+                id: 'chap7',
+                icon: '💻',
+                title: 'Chapitre 7 : Code Final (Bookmark API)',
+                intro: "L'aboutissement du cours. Voici le fichier complet du serveur Express, intégrant la configuration TypeScript, les middlewares, et le CRUD complet avec validations et bonnes pratiques appliquées.",
+                content: `
+                    <div class="mt-6 bg-[#1e293b] rounded-xl overflow-hidden shadow-lg border border-slate-700 relative">
+                        <div class="flex items-center px-4 py-2 bg-[#0f172a] border-b border-slate-700">
+                            <div class="flex space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="ml-4 text-xs text-slate-400 font-mono">server.ts</div>
+                        </div>
+                        <pre class="p-4 text-sm font-mono text-[#e2e8f0] overflow-x-auto h-[60vh] max-h-[600px] leading-relaxed">
+<span class="text-purple-400">import</span> express <span class="text-purple-400">from</span> <span class="text-green-300">"express"</span>;
+
+<span class="text-slate-400">/* 1. DÉFINITION DES TYPES */</span>
+<span class="text-purple-400">interface</span> <span class="text-amber-300">Bookmark</span> {
+  id: <span class="text-blue-300">number</span>;
+  url: <span class="text-blue-300">string</span>;
+  title: <span class="text-blue-300">string</span>;
+  tag?: <span class="text-blue-300">string</span>;
+}
+
+<span class="text-slate-400">/* 2. BASE DE DONNÉES SIMULÉE */</span>
+<span class="text-purple-400">let</span> bookmarks: Bookmark[] = [
+  { id: <span class="text-amber-400">1</span>, url: <span class="text-green-300">"https://expressjs.com"</span>, title: <span class="text-green-300">"Express.js"</span>, tag: <span class="text-green-300">"node"</span> },
+  { id: <span class="text-amber-400">2</span>, url: <span class="text-green-300">"https://typescriptlang.org"</span>, title: <span class="text-green-300">"TypeScript"</span>, tag: <span class="text-green-300">"typescript"</span> }
+];
+
+<span class="text-purple-400">const</span> app = express();
+app.use(express.json());
+
+<span class="text-slate-400">/* --- CREATE (POST) --- */</span>
+app.post(<span class="text-green-300">"/bookmarks"</span>, (req, res) => {
+  <span class="text-purple-400">const</span> body = req.body <span class="text-purple-400">as</span> Partial&lt;Bookmark&gt;;
+
+  <span class="text-purple-400">if</span> (!body.title) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Missing title"</span> });
+  <span class="text-purple-400">if</span> (!body.url) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Missing url"</span> });
+
+  <span class="text-purple-400">const</span> newId = bookmarks.length > <span class="text-amber-400">0</span> ? Math.max(...bookmarks.map(b => b.id)) + <span class="text-amber-400">1</span> : <span class="text-amber-400">1</span>;
+
+  <span class="text-purple-400">const</span> newBookmark: Bookmark = { id: newId, url: body.url, title: body.title, tag: body.tag };
+  bookmarks.push(newBookmark);
+  
+  res.status(<span class="text-amber-400">201</span>).json(newBookmark);
+});
+
+<span class="text-slate-400">/* --- READ ALL / FILTER (GET) --- */</span>
+app.get(<span class="text-green-300">"/bookmarks"</span>, (req, res) => {
+  <span class="text-purple-400">const</span> queryTag = req.query.tag;
+  <span class="text-purple-400">if</span> (queryTag) {
+    <span class="text-purple-400">const</span> filtered = bookmarks.filter(b => b.tag === queryTag);
+    <span class="text-purple-400">return</span> res.json(filtered);
+  }
+  res.json(bookmarks);
+});
+
+<span class="text-slate-400">/* --- READ ONE (GET) --- */</span>
+app.get(<span class="text-green-300">"/bookmarks/:id"</span>, (req, res) => {
+  <span class="text-purple-400">const</span> id = Number(req.params.id);
+  <span class="text-purple-400">if</span> (Number.isNaN(id)) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Invalid ID"</span> });
+
+  <span class="text-purple-400">const</span> foundBook = bookmarks.find(b => b.id === id);
+  <span class="text-purple-400">if</span> (!foundBook) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">404</span>).json({ error: <span class="text-green-300">"Not found"</span> });
+  
+  res.json(foundBook);
+});
+
+<span class="text-slate-400">/* --- UPDATE PARTIAL (PATCH) --- */</span>
+app.patch(<span class="text-green-300">"/bookmarks/:id"</span>, (req, res) => {
+  <span class="text-purple-400">const</span> id = Number(req.params.id);
+  <span class="text-purple-400">const</span> body = req.body <span class="text-purple-400">as</span> Partial&lt;Bookmark&gt;;
+  <span class="text-purple-400">if</span> (Number.isNaN(id)) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Invalid ID"</span> });
+
+  <span class="text-purple-400">const</span> oldBookMark = bookmarks.find(b => b.id === id);
+  <span class="text-purple-400">if</span> (!oldBookMark) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">404</span>).json({ error: <span class="text-green-300">"Not found"</span> });
+
+  <span class="text-purple-400">const</span> updatedBookmark = { ...oldBookMark, ...body };
+
+  bookmarks = bookmarks.map(b => (b.id === id ? updatedBookmark : b));
+  res.json(updatedBookmark);
+});
+
+<span class="text-slate-400">/* --- DELETE (DELETE) --- */</span>
+app.delete(<span class="text-green-300">"/bookmarks/:id"</span>, (req, res) => {
+  <span class="text-purple-400">const</span> id = Number(req.params.id);
+  <span class="text-purple-400">if</span> (Number.isNaN(id)) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">400</span>).json({ error: <span class="text-green-300">"Invalid ID"</span> });
+
+  <span class="text-purple-400">const</span> index = bookmarks.findIndex(b => b.id === id);
+  <span class="text-purple-400">if</span> (index === -<span class="text-amber-400">1</span>) <span class="text-purple-400">return</span> res.status(<span class="text-amber-400">404</span>).json({ error: <span class="text-green-300">"Not found"</span> });
+
+  bookmarks.splice(index, <span class="text-amber-400">1</span>);
+  res.status(<span class="text-amber-400">204</span>).send();
+});
+
+app.listen(<span class="text-amber-400">4000</span>, () => console.log(<span class="text-green-300">"🚀 Server running on port 4000"</span>));</pre>
+                    </div>
+                `
+            }
+        };
+
+        const navKeys = ['home', 'chap1', 'chap2', 'chap3', 'chap4', 'chap5', 'chap6', 'chap7'];
+        let currentState = 'home';
+        let currentChartInstance = null;
+
+        function initApp() {
+            const navContainer = document.getElementById('nav-container');
+            let navHtml = '<ul class="flex flex-col space-y-1 px-4">';
+            
+            navKeys.forEach(key => {
+                const item = appData[key];
+                navHtml += `
+                    <li>
+                        <button onclick="navigate('${key}')" id="nav-${key}" class="nav-item w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 text-stone-600 ${key === currentState ? 'active' : ''}">
+                            <span class="text-lg">${item.icon}</span>
+                            <span class="text-sm font-medium truncate">${item.title}</span>
+                        </button>
+                    </li>
+                `;
+            });
+            navHtml += '</ul>';
+            navContainer.innerHTML = navHtml;
+
+            renderContent(currentState);
+        }
+
+        function navigate(viewId) {
+            document.getElementById(`nav-${currentState}`).classList.remove('active', 'bg-teal-700', 'text-white', 'font-semibold');
+            document.getElementById(`nav-${currentState}`).classList.add('text-stone-600');
+            
+            currentState = viewId;
+            
+            document.getElementById(`nav-${currentState}`).classList.add('active', 'bg-teal-700', 'text-white', 'font-semibold');
+            document.getElementById(`nav-${currentState}`).classList.remove('text-stone-600');
+
+            renderContent(currentState);
+        }
+
+        function renderContent(viewId) {
+            const mainContent = document.getElementById('main-content');
+            const data = appData[viewId];
+            
+            if (currentChartInstance) {
+                currentChartInstance.destroy();
+                currentChartInstance = null;
+            }
+
+            let html = `
+                <div class="max-w-4xl mx-auto opacity-0 transition-opacity duration-300" id="content-fade">
+                    <div class="mb-8">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-100 text-teal-800 text-2xl mb-4 shadow-sm border border-teal-200">
+                            ${data.icon}
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">${data.title}</h2>
+                        <p class="mt-4 text-lg text-stone-600 leading-relaxed max-w-3xl">${data.intro}</p>
+                    </div>
+                    <div class="mt-8">
+                        ${data.content}
+                    </div>
+                </div>
+            `;
+            
+            mainContent.innerHTML = html;
+            
+            setTimeout(() => {
+                document.getElementById('content-fade').classList.remove('opacity-0');
+            }, 50);
+
+            if (viewId === 'home') {
+                setTimeout(initRadarChart, 100);
+            } else if (viewId === 'chap3') {
+                setTimeout(initStatusChart, 100);
+            }
+        }
+
+        function initRadarChart() {
+            const ctx = document.getElementById('radarChart');
+            if (!ctx) return;
+
+            currentChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Node.js', 'Express', 'TypeScript', 'REST API', 'Methodes HTTP', 'Clean Code'],
+                    datasets: [{
+                        label: 'Niveau Cible',
+                        data: [85, 95, 80, 90, 90, 85],
+                        fill: true,
+                        backgroundColor: 'rgba(15, 118, 110, 0.2)',
+                        borderColor: 'rgb(15, 118, 110)',
+                        pointBackgroundColor: 'rgb(15, 118, 110)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(15, 118, 110)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            pointLabels: {
+                                font: { size: 11, family: "'Inter', sans-serif" },
+                                color: '#475569'
+                            },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function initStatusChart() {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+
+            currentChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['1xx Information', '2xx Succès', '3xx Redirection', '4xx Erreur Client', '5xx Erreur Serveur'],
+                    datasets: [{
+                        data: [5, 35, 10, 40, 10],
+                        backgroundColor: [
+                            '#e2e8f0', 
+                            '#22c55e', 
+                            '#cbd5e1', 
+                            '#f59e0b', 
+                            '#ef4444'  
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Inter', sans-serif", size: 12 },
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const notes = {
+                                        0: "Rarement utilisés en dév quotidien.",
+                                        1: "200 OK, 201 Created, 204 No Content.",
+                                        2: "301 Moved, 304 Not Modified.",
+                                        3: "400 Bad Request, 401 Auth, 404 Not Found.",
+                                        4: "500 Internal Error, 503 Unavailable."
+                                    };
+                                    return " " + notes[context.dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        window.onload = initApp;
+    </script>
 </body>
 </html>
